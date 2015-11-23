@@ -1,0 +1,26 @@
+{
+  "name": "electron-test",
+  "version": "1.0.0",
+  "description": "working with electron",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eivu/electronTest/"
+  },
+  "author": "Robert Jenkins",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.4.8",
+    "angular-route": "^1.4.8",
+    "aws-sdk": "^2.2.18",
+    "bootstrap": "^3.3.5",
+    "crypto": "0.0.3",
+    "electron-prebuilt": "^0.35.1",
+    "filewalker": "^0.1.2",
+    "md5-file": "^2.0.3",
+    "md5-file-promise": "^1.0.2"
+  }
+}
