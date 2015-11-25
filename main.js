@@ -1,5 +1,6 @@
-var app = require('app');  // Module to control application life.
-var BrowserWindow = require('browser-window');  // Module to create native browser window.
+var app = require('app'),  // Module to control application life.
+    BrowserWindow = require('browser-window'),  // Module to create native browser window.
+    ipc = require('ipc');
 
 // Report crashes to our server.
 require('crash-reporter').start();
@@ -24,10 +25,17 @@ app.on('ready', function() {
   mainWindow = new BrowserWindow({width: 800, height: 600});
 
   // and load the index.html of the app.
-  mainWindow.loadUrl('file://' + __dirname + '/index.html');
+  mainWindow.loadURL('file://' + __dirname + '/index.html');
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+
+  //ipc stuff?
+  ipc.on('requestForTestFn', function(event, argument){
+    console.log("inside ipc");
+    console.log(argument)
+    event.sender.send('responseFromTestFn', { output: { data: 'raven' }});
+  })
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function() {
