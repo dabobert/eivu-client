@@ -2,15 +2,12 @@ var ipc = require('ipc'),
      $  = require('jQuery'),
   testUpload = function() {
     var requestData = { canvas: "black" };
-    // debugger;
+    debugger;
     ipc.send('requestForTestFn', requestData);
   },
-   selectFolder = function(e) {
-    var theFiles = e.target.files;
-    var relativePath = theFiles[0].webkitRelativePath;
-    var folder = relativePath.split("/");
-    debugger;
-    alert(folder[0]);
+   assignDataPath = function(e) {
+    //due to security reasons the value of a file input can not be set, so we will assign a data-path attribute and the code will use that
+    $("#uploadTarget").data("path", e.target.files[0].path)
   };
 ipc.on('responseFromTestFn', function(responseArgument){
   console.log(responseArgument.output.data);
