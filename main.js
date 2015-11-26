@@ -34,7 +34,41 @@ app.on('ready', function() {
   ipc.on('requestForTestFn', function(event, argument){
     console.log("inside ipc");
     console.log(argument)
-    event.sender.send('responseFromTestFn', { output: { data: 'raven' }});
+
+
+var accessKeyId     = process.env.EIVU_AWS_ACCESS_KEY_ID;
+var secretAccessKey = process.env.EIVU_AWS_SECRET_ACCESS_KEY;
+
+var AWS = require('aws-sdk'),
+    fs = require('fs');
+var pathToFile = '/Users/jinx/Dropbox/eBooks/Electron/electron-quick-start-master.zip'
+var bucketName = 'eivutest';
+var filename   = 'electro-quick-start-master'+(new Date).getTime()+'.zip';
+
+// For dev purposes only
+AWS.config.update({ accessKeyId: accessKeyId, secretAccessKey: secretAccessKey });
+
+// Read in the file, convert it to base64, store to S3
+var fileStream = fs.createReadStream(pathToFile);
+fileStream.on('error', function (err) {
+  if (err) { throw err; }
+});
+
+fileStream.on('open', function () {
+  var s3 = new AWS.S3();
+  s3.putObject({
+    Bucket: bucketName,
+    Key: filename,
+    Body: fileStream
+  }, function (err) {
+    if (err) { throw err; }
+  });
+});
+    event.sender.send('responseFromTestFn', { output: { data: filename }});
+
+
+
+
   })
 
   // Emitted when the window is closed.
