@@ -1,15 +1,13 @@
-// var $ = require('jQuery');
 var ipc = require('ipc'),
+     $  = require('jQuery'),
   testUpload = function() {
     var requestData = { canvas: "black" };
     // debugger;
     ipc.send('requestForTestFn', requestData);
   };
 ipc.on('responseFromTestFn', function(responseArgument){
-  console.log("hey");
-  console.log(responseArgument);
-  // debugger;
-  // $("#outputWindow").innerHTML = responseArgument.output.data;
+  console.log(responseArgument.output.data);
+  $("#outputWindow").html(responseArgument.output.data);
 })    
 
 // var accessKeyId     = process.env.EIVU_AWS_ACCESS_KEY_ID;
