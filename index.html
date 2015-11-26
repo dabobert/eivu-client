@@ -9,6 +9,7 @@
     Chrome <script>document.write(process.versions.chrome)</script>,
     and Electron <script>document.write(process.versions.electron)</script>.
     <br/>
+    <input type="file" id="FileUpload" onchange="selectFolder(event)" webkitdirectory mozdirectory msdirectory odirectory directory multiple />
     <button id="upload" onClick="testUpload()">Upload</button>
     <div id="outputWindow">----</div>
     <script type="text/javascript" src="js/app.js"></script>
