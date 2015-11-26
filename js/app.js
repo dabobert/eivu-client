@@ -1,8 +1,8 @@
 var ipc = require('ipc'),
      $  = require('jQuery'),
   testUpload = function() {
-    var requestData = { canvas: "black" };
-    debugger;
+    var requestData = { path: $("#uploadTarget").data("path") };
+    console.log(requestData);
     ipc.send('requestForTestFn', requestData);
   },
    assignDataPath = function(e) {
