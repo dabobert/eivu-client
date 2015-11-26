@@ -61,10 +61,14 @@ fileStream.on('open', function () {
     Key: filename,
     Body: fileStream
   }, function (err) {
-    if (err) { throw err; }
+    if (err) {
+      throw err;
+    } else {
+      console.log("done!")
+      event.sender.send('responseFromTestFn', { output: { data: (filename + " uploaded!") }});
+    }
   });
 });
-    event.sender.send('responseFromTestFn', { output: { data: filename }});
 
 
 
