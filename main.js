@@ -1,6 +1,7 @@
 var app = require('app'),  // Module to control application life.
     BrowserWindow = require('browser-window'),  // Module to create native browser window.
-    ipc = require('ipc');
+    ipc = require('ipc'),
+    cf  = require('/Users/jinx/projects/eivu/electron/starter-app/js/cloud-file.js');
 
 // Report crashes to our server.
 require('crash-reporter').start();

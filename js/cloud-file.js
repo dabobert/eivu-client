@@ -41,7 +41,11 @@ function CloudFile() {
   // end
 }
 
-Class.upload = function(event, pathToFile) {
+CloudFile.test = function() {
+  console.log("hey")
+}
+
+CloudFile.upload = function(event, pathToFile) {
 
 //check to makre sure the md5 doens't exist, if it does exist exist
   var accessKeyId     = process.env.EIVU_AWS_ACCESS_KEY_ID;
