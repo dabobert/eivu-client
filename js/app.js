@@ -4,6 +4,7 @@ var ipc  = require('ipc'),
      $   = require('jQuery'),
     md5File  = require('md5-file'),
     filewalker = require('filewalker'),
+    fileHash = {},
     fileData = [];
 
   testUpload = function() {
@@ -17,14 +18,29 @@ var ipc  = require('ipc'),
       // .on('dir', function(p) {
       //   console.log('dir:  %s', p);
       // })
-      .on('file', function(filename, s) {
+      .on('file', function(fileLastPath, fileStats) {
+        filename = fileLastPath.split("/").reverse()[0];
+        console.log('filename => ' + filename);
+        fullPath = initialDir + '/' + fileLastPath;
         if (badFilenames.indexOf(filename) == -1) {
-          fullPath = initialDir + '/' + filename;
-          md5  = md5File(fullPath);
-          console.log(fullPath);
-          console.log(md5);
-          fileData.push({ fullPath: fullPath, md5: md5, filename: filewalker})
-          $('<tr><td>' + filename + '</td><td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
+
+
+md5File(fullPath, function (error, md5) {
+  if (error) {
+    return console.log(error);
+  } else {
+    console.log('inside filename => ' + filename);
+    console.log('fullPath => ' + fullPath);
+    console.log('md5 => ' + md5);
+    fileData.push({ fullPath: fullPath, md5: md5, filename: filename, size: fileStats.size })
+    $('<tr id="' + md5 + '"><td>' + filename + '</td><td>' + fileStats.size + '</td><<td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
+  }
+});
+
+
+
+
+
         }
         // console.log('file: %s, %d bytes', p, s.size);
       })
