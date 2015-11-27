@@ -7,23 +7,24 @@ var ipc  = require('ipc'),
     fileData = [];
 
   testUpload = function() {
-    var badFilenames = ['.DS_Store'],
+    var badFilenames = ['.DS_Store', '.DS_Store'],
         fullPath     = null,
-        pathPrefix   = $("#uploadTarget").data("path");
+        initialDir   = $("#uploadTarget").data("path");
 
     var requestData = { path: $("#uploadTarget").data("path") };
 
-    filewalker("/Users/jinx/Documents/eivu")
+    filewalker(initialDir)
       // .on('dir', function(p) {
       //   console.log('dir:  %s', p);
       // })
       .on('file', function(filename, s) {
         if (badFilenames.indexOf(filename) == -1) {
-          fullPath = pathPrefix + '/' + filename;
-          md5  = md5File('/Users/jinx/.ssh/config');
+          fullPath = initialDir + '/' + filename;
+          md5  = md5File(fullPath);
           console.log(fullPath);
           console.log(md5);
           fileData.push({ fullPath: fullPath, md5: md5, filename: filewalker})
+          $('<tr><td>' + filename + '</td><td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
         }
         // console.log('file: %s, %d bytes', p, s.size);
       })
