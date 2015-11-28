@@ -23,47 +23,41 @@ var ipc  = require('ipc'),
 md5File(fullPath, function (error, md5) {
   if (error) return console.log(error)
   // console.log(sum) // '18e904aae79b5642ed7975c0a0074936'
-filename = "a"
-
+filename = fullPath.split('/').reverse()[0]
+console.log(filename)
 fileData.push({ fullPath: fullPath, md5: md5, filename: filename, size: fileStats.size })
 $('<tr id="' + md5 + '"><td>' + filename + '</td><td>' + fileStats.size + '</td><<td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
 // debugger;
 
 })//end md5File
-
-
-
-
-
-
-
-
-
-
     });
+console.log("done!")
 
     ipc.send('requestForTestFn', requestData);
   },
   traverseFileSystem = function(currentPath, callback) {
     var files = fs.readdirSync(currentPath);
+    var list = []
     for (var i in files) {
       var currentFile = currentPath + '/' + files[i];
       var stats = fs.statSync(currentFile);
       if (stats.isFile()) {
+        list.push(currentFile);
         if (callback != null) {
           callback(currentFile, stats);
         }
         // console.log(currentFile);
       } else if (stats.isDirectory()) {
-        traverseFileSystem(currentFile, callback);
+        list.push(traverseFileSystem(currentFile, callback));
       }
     }
+    return list;
   },
   assignDataPath = function(e) {
     //due to security reasons the value of a file input can not be set, so we will assign a data-path attribute and the code will use that
     $("#uploadTarget").data("path", e.target.files[0].path)
   };
 ipc.on('responseFromTestFn', function(responseArgument){
-  console.log(responseArgument.output.data);
+  // console.log(responseArgument.output.data);
   $("#outputWindow").html(responseArgument.output.data);
 });
