@@ -1,15 +1,11 @@
 
 var ipc  = require('ipc'),
+    fs   = require('fs'),
     data = [],
      $   = require('jQuery'),
     md5File  = require('md5-file'),
-    filewalker = require('filewalker'),
     fileHash = {},
     fileData = [];
-
-var fs = require('fs');
-
-
 
   testUpload = function() {
     var badFilenames = ['.DS_Store', '.DS_Store'],
@@ -26,9 +22,6 @@ var fs = require('fs');
     ipc.send('requestForTestFn', requestData);
   },
   traverseFileSystem = function(currentPath, callback) {
-  // traverseFileSystem = function(currentPath, callback=null) {
-    //logging for 
-    //console.log(currentPath);
     var files = fs.readdirSync(currentPath);
     for (var i in files) {
       var currentFile = currentPath + '/' + files[i];
