@@ -15,8 +15,31 @@ var ipc  = require('ipc'),
     var requestData = { path: $("#uploadTarget").data("path") };
 
 
-    traverseFileSystem(initialDir, function(file) {
-      console.log(file);
+    traverseFileSystem(initialDir, function(fullPath, fileStats) {
+      console.log(fullPath);
+      // debugger
+
+
+md5File(fullPath, function (error, md5) {
+  if (error) return console.log(error)
+  // console.log(sum) // '18e904aae79b5642ed7975c0a0074936'
+filename = "a"
+
+fileData.push({ fullPath: fullPath, md5: md5, filename: filename, size: fileStats.size })
+$('<tr id="' + md5 + '"><td>' + filename + '</td><td>' + fileStats.size + '</td><<td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
+// debugger;
+
+})//end md5File
+
+
+
+
+
+
+
+
+
+
     });
 
     ipc.send('requestForTestFn', requestData);
@@ -28,7 +51,7 @@ var ipc  = require('ipc'),
       var stats = fs.statSync(currentFile);
       if (stats.isFile()) {
         if (callback != null) {
-          callback(currentFile);
+          callback(currentFile, stats);
         }
         // console.log(currentFile);
       } else if (stats.isDirectory()) {
