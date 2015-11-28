@@ -43,7 +43,7 @@ md5File(fullPath, function (error, md5) {
 
 
 
-        }
+        }//ends if badfilename
         // console.log('file: %s, %d bytes', p, s.size);
       })
       .on('error', function(err) {
