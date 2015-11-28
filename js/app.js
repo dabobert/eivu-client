@@ -19,24 +19,27 @@ var fs = require('fs');
     var requestData = { path: $("#uploadTarget").data("path") };
 
 
-
-
-
-
-
+    traverseFileSystem(initialDir, function(file) {
+      console.log(file);
+    });
 
     ipc.send('requestForTestFn', requestData);
   },
-  traverseFileSystem = function(currentPath) {
-    console.log(currentPath);
+  traverseFileSystem = function(currentPath, callback) {
+  // traverseFileSystem = function(currentPath, callback=null) {
+    //logging for 
+    //console.log(currentPath);
     var files = fs.readdirSync(currentPath);
     for (var i in files) {
       var currentFile = currentPath + '/' + files[i];
       var stats = fs.statSync(currentFile);
       if (stats.isFile()) {
-        console.log(currentFile);
+        if (callback != null) {
+          callback(currentFile);
+        }
+        // console.log(currentFile);
       } else if (stats.isDirectory()) {
-        traverseFileSystem(currentFile);
+        traverseFileSystem(currentFile, callback);
       }
     }
   },
