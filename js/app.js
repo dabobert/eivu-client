@@ -20,7 +20,7 @@ var ipc  = require('ipc'),
       // })
       .on('file', function(fileLastPath, fileStats) {
         filename = fileLastPath.split("/").reverse()[0];
-        console.log('filename => ' + filename);
+        console.log('raw => ' + filename);
         fullPath = initialDir + '/' + fileLastPath;
         if (badFilenames.indexOf(filename) == -1) {
 
@@ -29,11 +29,13 @@ md5File(fullPath, function (error, md5) {
   if (error) {
     return console.log(error);
   } else {
+
     console.log('inside filename => ' + filename);
     console.log('fullPath => ' + fullPath);
     console.log('md5 => ' + md5);
     fileData.push({ fullPath: fullPath, md5: md5, filename: filename, size: fileStats.size })
     $('<tr id="' + md5 + '"><td>' + filename + '</td><td>' + fileStats.size + '</td><<td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
+    debugger
   }
 });
 
