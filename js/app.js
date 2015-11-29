@@ -33,7 +33,7 @@ var ipc  = require('ipc'),
       // console.log(fileInfo);
       console.log(1);
       console.log(2);
-      console.log(fileInfo);
+      console.log(value);
       alert("done");
     });
 
