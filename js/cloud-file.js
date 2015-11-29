@@ -7,6 +7,21 @@ class CloudFile {
   constructor() {
     this.accessKeyId     = process.env.EIVU_AWS_ACCESS_KEY_ID;
     this.secretAccessKey = process.env.EIVU_AWS_SECRET_ACCESS_KEY;
+      // var folder,
+      // bucket,
+      // user,
+      // name ,
+      // asset ,
+      // md5 ,
+      // contentType ,
+      // filesize  ,
+      // description ,
+      // rating ,
+      // nsfw  ,
+      // adult ,
+      // folderId ,
+      // infoUrl ,
+      // bucketId;
   }
 
   static online() { //#bool
@@ -14,7 +29,6 @@ class CloudFile {
   }
 
   static toFilename(fullPath) {
-            debugger;
     return fullPath.split('/').reverse()[0];
   }
 

@@ -16,12 +16,10 @@ var ipc  = require('ipc'),
     Folder.traverse(initialDir, function(fullPath, fileStats) {
       var md5Promise = new Promise((resolve, reject) => md5File(fullPath, function (error, md5) {
         if (error) return console.log(error)
-
-        // filename = CloudFile.toFilename(fullPath);
-        console.log(1)
-
-        fileData.push({ fullPath: fullPath, md5: md5, 1: filename, size: fileStats.size })
-        $('<tr id="' + md5 + '"><td>' + 1 + '</td><td>' + fileStats.size + '</td><<td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
+        var filename = CloudFile.toFilename(fullPath);
+        console.log(filename)
+        fileData.push({ fullPath: fullPath, md5: md5, filename: filename, size: fileStats.size })
+        $('<tr id="' + md5 + '"><td>' + filename + '</td><td>' + fileStats.size + '</td><<td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
       resolve(md5);
       }));//end md5File
       
