@@ -1,12 +1,10 @@
 
 var ipc  = require('ipc'),
     fs   = require('fs'),
-    data = [],
      $   = require('jQuery'),
+    fileInfo = [],
     md5File  = require('md5-file'),
-    fileHash = {},
-    promises = [], //folder class
-    fileData = [];
+    md5Promises = [];
 
   testUpload = function() {
     // var badFilenames = ['.DS_Store', '.DS_Store'],
@@ -14,21 +12,28 @@ var ipc  = require('ipc'),
         requestData = { path: $("#uploadTarget").data("path") };
 
     Folder.traverse(initialDir, function(fullPath, fileStats) {
-      var md5Promise = new Promise((resolve, reject) => md5File(fullPath, function (error, md5) {
-        if (error) return console.log(error)
+      var promise = new Promise((resolve, reject) => md5File(fullPath, function (error, md5) {
+        if (error) return console.log(error);
+
         var filename = CloudFile.toFilename(fullPath);
-        console.log(filename)
-        fileData.push({ fullPath: fullPath, md5: md5, filename: filename, size: fileStats.size })
+
+        if (Folder.badFilenames().indexOf(filename) != -1) return console.log('skipping ' + filename);
+
         $('<tr id="' + md5 + '"><td>' + filename + '</td><td>' + fileStats.size + '</td><<td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
-      resolve(md5);
+        data = { fullPath: fullPath, md5: md5, filename: filename, size: fileStats.size }
+        fileInfo.push( data );
+        resolve( data );
       }));//end md5File
       
       //store value for promise
-      promises.push(md5Promise);
+      md5Promises.push(promise);
     });//end traverse
 
-    Promise.all(promises).then(function(value) {
-      // console.log(value); //one, two
+    Promise.all(md5Promises).then(function(value) {
+      // console.log(fileInfo);
+      console.log(1);
+      console.log(2);
+      console.log(fileInfo);
       alert("done");
     });
 
