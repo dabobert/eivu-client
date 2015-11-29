@@ -5,7 +5,8 @@ var ipc  = require('ipc'),
      $   = require('jQuery'),
     md5File  = require('md5-file'),
     fileHash = {},
-    badFilenames = ['.DS_Store'],
+    badFilenames = ['.DS_Store'], //folder class
+    promises = [], //folder class
     fileData = [];
 
   testUpload = function() {
@@ -14,14 +15,23 @@ var ipc  = require('ipc'),
         requestData = { path: $("#uploadTarget").data("path") };
 
     traverseFileSystem(initialDir, function(fullPath, fileStats) {
-      md5File(fullPath, function (error, md5) {
+      var md5Promise = new Promise((resolve, reject) => md5File(fullPath, function (error, md5) {
         if (error) return console.log(error)
         filename = fullPath.split('/').reverse()[0];
         console.log(filename)
         fileData.push({ fullPath: fullPath, md5: md5, filename: filename, size: fileStats.size })
         $('<tr id="' + md5 + '"><td>' + filename + '</td><td>' + fileStats.size + '</td><<td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
-      });//end md5File
+      resolve(md5);
+      }));//end md5File
+      
+      //store value for promise
+      promises.push(md5Promise);
     });//end traverse
+
+    Promise.all(promises).then(function(value) {
+      // console.log(value); //one, two
+      alert("done");
+    });
 
     ipc.send('requestForTestFn', requestData);
   },
