@@ -1,28 +1,31 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Hello World!</title>
+    <title>Eivu: version 0.0.1</title>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   </head>
   <body>
-    <h1>Eivu: version 0.0.1</h1>
-    <p>
-	    <input type="file" id="uploadTarget" onchange="assignDataPath(event)" webkitdirectory mozdirectory msdirectory odirectory directory multiple />
-	  </p>
-	  <p>
-	    <button id="upload" onClick="testUpload()">Upload</button>
-	  </p>
-    <table id="fileData">
-    	<thead>
-    		<th>Filename</th>
-    		<th>Size</th>
-    		<th>MD5</th>
-    		<th>Status</th>
-    	</thead>
-    	<tbody>
-    	</tbody>
-    </table>
-    <script type="text/javascript" src="js/app.js"></script>
-    <script type="text/javascript" src="js/cloud-file.js"></script>
-    <script type="text/javascript" src="js/folder.js"></script>
+    <div class="container">
+      <h1>Eivu: version 0.0.1</h1>
+      <p>
+  	    <input type="file" id="uploadTarget" onchange="assignDataPath(event)" webkitdirectory mozdirectory msdirectory odirectory directory multiple />
+  	  </p>
+  	  <p>
+  	    <button id="upload" onClick="testUpload()">Upload</button>
+  	  </p>
+      <table id="fileData" class="table table-striped">
+      	<thead>
+      		<th>Filename</th>
+      		<th>Size</th>
+      		<th>MD5</th>
+      		<th>Status</th>
+      	</thead>
+      	<tbody>
+      	</tbody>
+      </table>
+      <script type="text/javascript" src="js/app.js"></script>
+      <script type="text/javascript" src="js/cloud-file.js"></script>
+      <script type="text/javascript" src="js/folder.js"></script>
+    </div>
   </body>
 </html>

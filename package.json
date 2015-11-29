@@ -17,7 +17,7 @@
     "angular": "^1.4.8",
     "angular-route": "^1.4.8",
     "aws-sdk": "^2.2.18",
-    "bootstrap": "^3.3.5",
+    "bootstrap": "^3.3.6",
     "crypto": "0.0.3",
     "filewalker": "^0.1.2",
     "jquery": "^2.1.4",

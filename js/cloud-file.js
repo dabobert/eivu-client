@@ -56,9 +56,6 @@ class CloudFile {
         alert("bang")
       });
     });//end md5File
-
-
-
   }
 
   static upload(fullPath,remotePath,callback) {

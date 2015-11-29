@@ -12,6 +12,7 @@ var ipc  = require('ipc'),
         requestData = { path: $("#uploadTarget").data("path") };
 
     Folder.traverse(initialDir, function(fullPath, fileStats) {
+      console.log(fullPath)
       var promise = new Promise((resolve, reject) => md5File(fullPath, function (error, md5) {
         if (error) return console.log(error);
 
@@ -19,7 +20,7 @@ var ipc  = require('ipc'),
 
         if (Folder.badFilenames().indexOf(filename) != -1) return console.log('skipping ' + filename);
 
-        $('<tr id="' + md5 + '"><td class="filename">' + filename + '</td><td class="size">' + fileStats.size + '</td><td class="md5">' + md5 + '</td><td class="status">Queued</td></tr>').appendTo('table#fileData tbody');
+        $('<tr id="' + md5 + '"><td class="filename">' + filename.substring(0,50) + '</td><td class="size">' + fileStats.size + '</td><td class="md5">' + md5 + '</td><td class="status">Queued</td></tr>').appendTo('table#fileData tbody');
         data = { fullPath: fullPath, md5: md5, filename: filename, size: fileStats.size }
         fileInfo.push( data );
         resolve( data );
