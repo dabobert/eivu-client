@@ -13,11 +13,11 @@ class Folder {
       var currentFile = currentPath + '/' + files[i];
       var stats = fs.statSync(currentFile);
       if (stats.isFile()) {
-        filename = CloudFile.toFilename(currentFile);
+        // filename = CloudFile.toFilename(currentFile);
         // if (callback != null) {
-        if (Folder.badFilenames().indexOf(filename) == -1) {
+        // if (Folder.badFilenames().indexOf(filename) == -1) {
           callback(currentFile, stats);
-        }
+        // }
         // console.log(currentFile);
       } else if (stats.isDirectory()) {
         Folder.traverse(currentFile, callback);
