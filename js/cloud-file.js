@@ -37,21 +37,12 @@ class CloudFile {
   }
 
 
-  // // def visit #string - "open #{self.url}"
-  // // end
-
-  // // def url #string 
-  // // end
-
-  // // def path #string
-  // // end
-
-  // // def delete_remote
-  // // end
+  delete_remote() {
+    return false;
+  }
 
 
-
-  static upload(pathToFile) {
+  static upload(pathToFile=1,remotePath=null) {
     //check to makre sure the md5 doens't exist, if it does exist exist
     var pathToFile = '/Users/jinx/Dropbox/eBooks/Electron/electron-quick-start-master.zip'
     var bucketName = 'eivutest';
