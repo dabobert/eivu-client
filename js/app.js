@@ -5,7 +5,6 @@ var ipc  = require('ipc'),
      $   = require('jQuery'),
     md5File  = require('md5-file'),
     fileHash = {},
-    badFilenames = ['.DS_Store'], //folder class
     promises = [], //folder class
     fileData = [];
 
@@ -14,13 +13,15 @@ var ipc  = require('ipc'),
     var initialDir  = $("#uploadTarget").data("path"),
         requestData = { path: $("#uploadTarget").data("path") };
 
-    traverseFileSystem(initialDir, function(fullPath, fileStats) {
+    Folder.traverse(initialDir, function(fullPath, fileStats) {
       var md5Promise = new Promise((resolve, reject) => md5File(fullPath, function (error, md5) {
         if (error) return console.log(error)
-        filename = fullPath.split('/').reverse()[0];
-        console.log(filename)
-        fileData.push({ fullPath: fullPath, md5: md5, filename: filename, size: fileStats.size })
-        $('<tr id="' + md5 + '"><td>' + filename + '</td><td>' + fileStats.size + '</td><<td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
+
+        // filename = CloudFile.toFilename(fullPath);
+        console.log(1)
+
+        fileData.push({ fullPath: fullPath, md5: md5, 1: filename, size: fileStats.size })
+        $('<tr id="' + md5 + '"><td>' + 1 + '</td><td>' + fileStats.size + '</td><<td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
       resolve(md5);
       }));//end md5File
       
@@ -35,32 +36,11 @@ var ipc  = require('ipc'),
 
     ipc.send('requestForTestFn', requestData);
   },
-  traverseFileSystem = function(currentPath, callback) {
-    var files = fs.readdirSync(currentPath);
-    var list = []
-    for (var i in files) {
-      var currentFile = currentPath + '/' + files[i];
-      var stats = fs.statSync(currentFile);
-      if (stats.isFile()) {
-
-        filename = currentFile.split('/').reverse()[0];
-
-        list.push(currentFile);
-        // if (callback != null) {
-        if (badFilenames.indexOf(filename) == -1) {
-          callback(currentFile, stats);
-        }
-        // console.log(currentFile);
-      } else if (stats.isDirectory()) {
-        list.push(traverseFileSystem(currentFile, callback));
-      }
-    }
-    return list;
-  },
   assignDataPath = function(e) {
     //due to security reasons the value of a file input can not be set, so we will assign a data-path attribute and the code will use that
     $("#uploadTarget").data("path", e.target.files[0].path)
   };
+
 ipc.on('responseFromTestFn', function(responseArgument){
   // console.log(responseArgument.output.data);
   $("#outputWindow").html(responseArgument.output.data);
