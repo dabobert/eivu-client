@@ -5,34 +5,24 @@ var ipc  = require('ipc'),
      $   = require('jQuery'),
     md5File  = require('md5-file'),
     fileHash = {},
-     badFilenames = ['.DS_Store', '.DS_Store'],
+    badFilenames = ['.DS_Store'],
     fileData = [];
 
   testUpload = function() {
     // var badFilenames = ['.DS_Store', '.DS_Store'],
-    var    fullPath     = null,
-        initialDir   = $("#uploadTarget").data("path");
-
-    var requestData = { path: $("#uploadTarget").data("path") };
-
+    var fullPath    = null,
+        initialDir  = $("#uploadTarget").data("path"),
+        requestData = { path: $("#uploadTarget").data("path") };
 
     traverseFileSystem(initialDir, function(fullPath, fileStats) {
-      console.log(fullPath);
-      // debugger
-
-
-md5File(fullPath, function (error, md5) {
-  if (error) return console.log(error)
-  // console.log(sum) // '18e904aae79b5642ed7975c0a0074936'
-filename = fullPath.split('/').reverse()[0];
-console.log(filename)
-fileData.push({ fullPath: fullPath, md5: md5, filename: filename, size: fileStats.size })
-$('<tr id="' + md5 + '"><td>' + filename + '</td><td>' + fileStats.size + '</td><<td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
-// debugger;
-
-})//end md5File
-    });
-console.log("done!")
+      md5File(fullPath, function (error, md5) {
+        if (error) return console.log(error)
+        filename = fullPath.split('/').reverse()[0];
+        console.log(filename)
+        fileData.push({ fullPath: fullPath, md5: md5, filename: filename, size: fileStats.size })
+        $('<tr id="' + md5 + '"><td>' + filename + '</td><td>' + fileStats.size + '</td><<td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
+      });//end md5File
+    });//end traverse
 
     ipc.send('requestForTestFn', requestData);
   },
