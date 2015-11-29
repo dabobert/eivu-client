@@ -41,25 +41,47 @@ class CloudFile {
     return false;
   }
 
+  static test(remote) {
+    var fullPath = '/Users/jinx/Dropbox/eBooks/Electron/electron-quick-start-master.zip'
 
-  static upload(fullPath,remotePath) {
+    md5File(fullPath, function (error, md5) {
+      if (error) return console.log(error);
+
+      var filename = CloudFile.toFilename(fullPath);
+
+      remote = `${md5.replace(/(\S{2})/g,"$1/")}${filename}`
+
+      CloudFile.upload('/Users/jinx/Dropbox/eBooks/Electron/electron-quick-start-master.zip', remote,function(){
+        console.log("all done!!!")
+        alert("bang")
+      });
+    });//end md5File
+
+
+
+  }
+
+  static upload(fullPath,remotePath,callback) {
+
+    if (!fullPath) throw 'fullPath is undefined';
+    if (!remotePath) throw 'remotePath is undefined';
 
     //check to makre sure the md5 doens't exist, if it does exist exist
     var accessKeyId     = process.env.EIVU_AWS_ACCESS_KEY_ID;
     var secretAccessKey = process.env.EIVU_AWS_SECRET_ACCESS_KEY;
-    var fullPath = '/Users/jinx/Dropbox/eBooks/Electron/electron-quick-start-master.zip'
-    var bucketName = 'eivutest';
-    var filename   = 'electro-quick-start-master'+(new Date).getTime()+'.zip';
-
+    var bucketName      = 'eivutest';
+    var fileStream      = fs.createReadStream(fullPath);
+/*
     if (!remotePath) {
-      remotePath = fullPath
+      remotePath = CloudFile.toFilename(fullPath)
     }
 
+    remotePath = `${(new Date).getTime()}-${remotePath}`;
+*/
     // For dev purposes only
     AWS.config.update({ accessKeyId: accessKeyId, secretAccessKey: secretAccessKey });
 
     // Read in the file, convert it to base64, store to S3
-    var fileStream = fs.createReadStream(fullPath);
     fileStream.on('error', function (err) {
       if (err) { throw err; }
     });
@@ -68,13 +90,15 @@ class CloudFile {
       var s3 = new AWS.S3();
       s3.putObject({
         Bucket: bucketName,
-        Key: filename,
+        Key: remotePath,
         Body: fileStream
       }, function (err) {
         if (err) {
           throw err;
         } else {
-          console.log('uploaded' + fullPath)
+          console.log(`uploaded to ${remotePath}`)
+          //run the callback if one is defined
+          if (callback) callback();
         }
       });
     });

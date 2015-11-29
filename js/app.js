@@ -19,7 +19,7 @@ var ipc  = require('ipc'),
 
         if (Folder.badFilenames().indexOf(filename) != -1) return console.log('skipping ' + filename);
 
-        $('<tr id="' + md5 + '"><td>' + filename + '</td><td>' + fileStats.size + '</td><<td>' + md5 + '</td><td>Queued</td></tr>').appendTo('table#fileData tbody');
+        $('<tr id="' + md5 + '"><td class="filename">' + filename + '</td><td class="size">' + fileStats.size + '</td><td class="md5">' + md5 + '</td><td class="status">Queued</td></tr>').appendTo('table#fileData tbody');
         data = { fullPath: fullPath, md5: md5, filename: filename, size: fileStats.size }
         fileInfo.push( data );
         resolve( data );
