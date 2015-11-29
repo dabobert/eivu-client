@@ -10,8 +10,7 @@ var ipc  = require('ipc'),
 
   testUpload = function() {
     // var badFilenames = ['.DS_Store', '.DS_Store'],
-    var fullPath    = null,
-        initialDir  = $("#uploadTarget").data("path"),
+    var initialDir  = $("#uploadTarget").data("path"),
         requestData = { path: $("#uploadTarget").data("path") };
 
     traverseFileSystem(initialDir, function(fullPath, fileStats) {
