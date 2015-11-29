@@ -42,24 +42,30 @@ class CloudFile {
   }
 
 
-  static upload(pathToFile=1,remotePath=null) {
+  static upload(fullPath,remotePath) {
+
     //check to makre sure the md5 doens't exist, if it does exist exist
-    var pathToFile = '/Users/jinx/Dropbox/eBooks/Electron/electron-quick-start-master.zip'
+    var accessKeyId     = process.env.EIVU_AWS_ACCESS_KEY_ID;
+    var secretAccessKey = process.env.EIVU_AWS_SECRET_ACCESS_KEY;
+    var fullPath = '/Users/jinx/Dropbox/eBooks/Electron/electron-quick-start-master.zip'
     var bucketName = 'eivutest';
     var filename   = 'electro-quick-start-master'+(new Date).getTime()+'.zip';
+
+    if (!remotePath) {
+      remotePath = fullPath
+    }
 
     // For dev purposes only
     AWS.config.update({ accessKeyId: accessKeyId, secretAccessKey: secretAccessKey });
 
     // Read in the file, convert it to base64, store to S3
-    var fileStream = fs.createReadStream(pathToFile);
+    var fileStream = fs.createReadStream(fullPath);
     fileStream.on('error', function (err) {
       if (err) { throw err; }
     });
 
     fileStream.on('open', function () {
       var s3 = new AWS.S3();
-      event.sender.send('responseFromTestFn', { output: { data: ("starting to upload" + filename) }});
       s3.putObject({
         Bucket: bucketName,
         Key: filename,
@@ -68,8 +74,7 @@ class CloudFile {
         if (err) {
           throw err;
         } else {
-          console.log("done!")
-          event.sender.send('responseFromTestFn', { output: { data: (filename + " uploaded!") }});
+          console.log('uploaded' + fullPath)
         }
       });
     });
