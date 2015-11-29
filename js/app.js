@@ -30,9 +30,6 @@ var ipc  = require('ipc'),
     });//end traverse
 
     Promise.all(md5Promises).then(function(value) {
-      // console.log(fileInfo);
-      console.log(1);
-      console.log(2);
       console.log(value);
       alert("done");
     });
