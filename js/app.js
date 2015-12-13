@@ -8,29 +8,22 @@ var ipc  = require('ipc'),
     md5Promises = [];
 
 
-
-
-
-
-// var queue = async.queue(createMd5, 10); // Run ten simultaneous uploads
 var queue = async.queue(function(singleFileInfo, callback) {
-// var queue = async.queue(function(fullPath, fileStats, callback) {
-setTimeout(function(){ 
-  var data={};
+  setTimeout(function(){ 
+    var data={};
 
-  md5File(singleFileInfo.fullPath, function (error, md5) {
-    if (error) return console.log(error);
-    var filename = CloudFile.toFilename(singleFileInfo.fullPath);
-    if (Folder.badFilenames().indexOf(filename) != -1) return console.log('skipping ' + filename);
+    md5File(singleFileInfo.fullPath, function (error, md5) {
+      if (error) return console.log(error);
+      var filename = CloudFile.toFilename(singleFileInfo.fullPath);
+      if (Folder.badFilenames().indexOf(filename) != -1) return console.log('skipping ' + filename);
 
-    $('<tr id="' + md5 + '"><td class="filename">' + filename.substring(0,50) + '</td><td class="size">' + singleFileInfo.fileStats.size + '</td><td class="md5">' + md5 + '</td><td class="status">Queued</td></tr>').appendTo('table#fileData tbody');
-    data = { fullPath: singleFileInfo.fullPath, md5: md5, filename: filename, size: singleFileInfo.fileStats.size }
-    fileInfo.push( data );
-  });//end md5File
-  callback(null, data);
- }, 0); //end setTimeout  
+      $('<tr id="' + md5 + '"><td class="filename">' + filename.substring(0,50) + '</td><td class="size">' + singleFileInfo.fileStats.size + '</td><td class="md5">' + md5 + '</td><td class="status">Queued</td></tr>').appendTo('table#fileData tbody');
+      data = { fullPath: singleFileInfo.fullPath, md5: md5, filename: filename, size: singleFileInfo.fileStats.size }
+      fileInfo.push( data );
+    });//end md5File
+    callback(null, data);
+  }, 0); //end setTimeout  
 }, 20); //Only allow 20 copy requests at a time
-
 
 
 
@@ -43,20 +36,10 @@ setTimeout(function(){
       console.log(fullPath)
       queue.push({fullPath: fullPath, fileStats: fileStats },function(error, data){
         console.log("in callback")
-        // debugger;
         if (error) return console.log(error);
-        // $('<tr id="' + data.md5 + '"><td class="filename">' + data.filename.substring(0,50) + '</td><td class="size">' + data.size + '</td><td class="md5">' + md5 + '</td><td class="status">Queued</td></tr>').appendTo('table#fileData tbody');
-        console.log(data.filename + " ==> " + data.md5)
+        // console.log(data.filename + " ==> " + data.md5)
       });
-
-
-
     });//end traverse
-
-    // Promise.all(md5Promises).then(function(value) {
-    //   console.log(value);
-    //   alert("done");
-    // });
 
     ipc.send('requestForTestFn', requestData);
   },
@@ -66,6 +49,5 @@ setTimeout(function(){
   };
 
 ipc.on('responseFromTestFn', function(responseArgument){
-  // console.log(responseArgument.output.data);
   $("#outputWindow").html(responseArgument.output.data);
 });
