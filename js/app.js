@@ -15,22 +15,26 @@ var ipc  = require('ipc'),
 // var queue = async.queue(createMd5, 10); // Run ten simultaneous uploads
 var queue = async.queue(function(singleFileInfo, callback) {
 // var queue = async.queue(function(fullPath, fileStats, callback) {
-  var promise = new Promise((resolve, reject) => md5File(singleFileInfo.fullPath, function (error, md5) {
+setTimeout(function(){ 
+  var data={};
+
+md5File(singleFileInfo.fullPath, function (error, md5) {
     if (error) return console.log(error);
 
     var filename = CloudFile.toFilename(singleFileInfo.fullPath);
 
     if (Folder.badFilenames().indexOf(filename) != -1) return console.log('skipping ' + filename);
 
+  // debugger
     $('<tr id="' + md5 + '"><td class="filename">' + filename.substring(0,50) + '</td><td class="size">' + singleFileInfo.fileStats.size + '</td><td class="md5">' + md5 + '</td><td class="status">Queued</td></tr>').appendTo('table#fileData tbody');
     data = { fullPath: singleFileInfo.fullPath, md5: md5, filename: filename, size: singleFileInfo.fileStats.size }
     fileInfo.push( data );
-    resolve( data );
-    callback(null, data);
-  }));//end md5File
-  // debugger
+    // resolve( data );
+  });//end md5File
   //store value for promise
-  md5Promises.push(promise);
+  // md5Promises.push(promise);
+    callback(null, data);
+ }, 0); //end setTimeout  
 
 
 }, 20); //Only allow 20 copy requests at a time
@@ -57,10 +61,10 @@ var queue = async.queue(function(singleFileInfo, callback) {
 
     });//end traverse
 
-    Promise.all(md5Promises).then(function(value) {
-      console.log(value);
-      alert("done");
-    });
+    // Promise.all(md5Promises).then(function(value) {
+    //   console.log(value);
+    //   alert("done");
+    // });
 
     ipc.send('requestForTestFn', requestData);
   },
