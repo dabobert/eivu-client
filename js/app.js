@@ -25,12 +25,12 @@ var traverseQueue = async.queue(function(singleFileInfo, callback) {
   }).fail(function(err) {
     console.log('Could not hash', err, err.stack);
   });
-}, 3); //Only allow 20 copy requests at a time
+}, 20); //Only allow n copy requests concurrently
 
 
 // assign a callback
 traverseQueue.drain = function() {
-  $('div#alertBox').html("done");
+  $('div#alertBox').html("all files queued");
   console.log(allFilesInfo.length)
   async.each(allFilesInfo, function(singleFileInfo, callback) {
 
@@ -57,9 +57,6 @@ traverseQueue.drain = function() {
         console.log('All files have been processed successfully');
       }
   });
-
-
-
 };
 
 
@@ -101,7 +98,7 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
         // .always(function() {
         //   alert("complete");
         // })
-Painter.mark(singleFileInfo.md5, "Uploaded");
+        Painter.mark(singleFileInfo.md5, "Uploaded");
         console.log(`uploaded ${singleFileInfo.filename}`);
         callback(null, singleFileInfo);
       });//ends CloudFile upload callback
@@ -127,9 +124,15 @@ Painter.mark(singleFileInfo.md5, "Uploaded");
 
 
 
-}, 10); //number of simulatenous things in queue, end queue
+}, 3); //number of items in queue that can be run concurrently. end uploadQueue
 
 
+
+//what do to when the queue is empty
+uploadQueue.drain = function() {
+  $('div#alertBox').html("UPLOADED!!!!");
+  console.log("UPLOADED!!!!")
+};
 
 
 testUpload = function() {
