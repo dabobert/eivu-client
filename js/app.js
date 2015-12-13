@@ -74,8 +74,9 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
     })
   .done(function() {
     console.log(`${singleFileInfo.md5}: ajax done`);
+    try{
     // using setTimeout 0 to queue the events after
-    setTimeout(function(){
+    // setTimeout(function(){
       remotePath = `${CloudFile.remoteFolder(singleFileInfo.md5)}${singleFileInfo.filename}`;
       CloudFile.upload(singleFileInfo.fullPath,remotePath,function(){
         //touch the eivu server endpoint to create a cloudfile within the db
@@ -102,7 +103,11 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
         console.log(`uploaded ${singleFileInfo.filename}`);
         callback(null, singleFileInfo);
       });//ends CloudFile upload callback
-    }, 0); //end setTimeout
+    // }, 0); //end setTimeout
+    } catch (error) {
+      callback(error, singleFileInfo);
+      Painter.mark(singleFileInfo.md5, "Failed");
+    }
   })    
   .fail(function(response) {
     error = $.parseJSON(response.responseText).message;
@@ -149,7 +154,7 @@ testUpload = function() {
         //in current implementation callback is triggered too early, ie before md5file callback is done
         //ie we are failing a race condition
         console.log("in post traverse callback")
-        if (error) return console.log(error);
+        if (error) return console.log("ERROR:", error);
         console.log(data.filename + " ==> " + data.md5)
       });
     } else {
