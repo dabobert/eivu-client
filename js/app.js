@@ -17,7 +17,7 @@ var queue = async.queue(function(singleFileInfo, callback) {
     var data, filename = CloudFile.toFilename(singleFileInfo.fullPath);
     data = { fullPath: singleFileInfo.fullPath, md5: md5, filename: filename, size: singleFileInfo.fileStats.size }
     //add the current file to the files table
-    addRowToStatusTable(data);
+    Painter.addRow(data);
     //add currnet file to global array of all files that are traversed.  this array will be used to upload data
     fileInfo.push( data );
     //tell the queue we have finished with this row, and perform "cleanup" tasks
@@ -26,10 +26,6 @@ var queue = async.queue(function(singleFileInfo, callback) {
     console.log('Could not hash', err, err.stack);
   });
 }, 20); //Only allow 20 copy requests at a time
-
-function addRowToStatusTable(data) {
-  $('<tr id="' + data.md5 + '"><td class="filename">' + data.filename.substring(0,50) + '</td><td class="size">' + data.size + '</td><td class="md5">' + data.md5 + '</td><td class="status">Queued</td></tr>').appendTo('table#fileData tbody');
-}
 
 
 // assign a callback
