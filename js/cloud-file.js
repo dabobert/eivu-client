@@ -148,8 +148,9 @@ class CloudFile {
         if (err) {
           throw err;
         } else {
-          console.log(`uploaded to ${remotePath}`)
+          console.log(`uploaded ${fullPath} to ${remotePath}`)
           //run the callback if one is defined
+          // debugger
           if (callback) callback();
         }
       });
