@@ -8,7 +8,7 @@ var ipc  = require('ipc'),
     
 
 
-var queue = async.queue(function(singleFileInfo, callback) {
+var traverseQueue = async.queue(function(singleFileInfo, callback) {
   /* 
     Using a promise md5 function to grab the md5.  This prevents the app from seizing (preventing user input) without using setTimeout 0 and means we don't 
     means we don't have to dive into callback hell
@@ -29,7 +29,7 @@ var queue = async.queue(function(singleFileInfo, callback) {
 
 
 // assign a callback
-queue.drain = function() {
+traverseQueue.drain = function() {
   console.log(fileInfo.length)
   alert("done!")
   console.log(fileInfo.length)
@@ -47,7 +47,7 @@ testUpload = function() {
     if (CloudFile.playable(fullPath)) {
       console.log(fullPath)
       //add file to processing queue
-      queue.push({fullPath: fullPath, fileStats: fileStats },function(error, data){
+      traverseQueue.push({fullPath: fullPath, fileStats: fileStats },function(error, data){
         //in current implementation callback is triggered too early, ie before md5file callback is done
         //ie we are failing a race condition
         console.log("in callback")
