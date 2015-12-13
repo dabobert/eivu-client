@@ -30,10 +30,105 @@ var traverseQueue = async.queue(function(singleFileInfo, callback) {
 
 // assign a callback
 traverseQueue.drain = function() {
+  $('div#alertBox').html("done");
   console.log(fileInfo.length)
-  alert("done!")
-  console.log(fileInfo.length)
-}
+  async.each(fileInfo, function(singleFileInfo, callback) {
+
+  //add file to upload queue
+  uploadQueue.push(singleFileInfo,function(error, data){
+    //in current implementation callback is triggered too early, ie before md5file callback is done
+    //ie we are failing a race condition
+    console.log("in post upload callback")
+    if (error) return console.log(error);
+    console.log(`not sure what to do here: ${singleFileInfo.filename}`)
+    // console.log(data.filename + " ==> " + data.md5)
+  });
+
+
+
+    callback();
+  }, function(err){
+      // if any of the file processing produced an error, err would equal that error
+      if( err ) {
+        // One of the iterations produced an error.
+        // All processing will now stop.
+        console.log('A file failed to process');
+      } else {
+        console.log('All files have been processed successfully');
+      }
+  });
+
+
+
+};
+
+
+var uploadQueue = async.queue(function(singleFileInfo, callback) {
+  // var jqxhr = $.ajax( "example.php" )
+  // $.ajax({
+  //     url: Config.baseUrl+"/ajax/favourites/set-favourite.ajax",
+  //     dataType: "json",
+  //     data: attrs,
+  //     type: "POST",
+  //     beforeSend: function(){
+  //       console.log(`${singleFileInfo.md5}: ajax beforeSend`);
+  //       Painter.mark(singleFileInfo.md5, "Uploading");
+  //     };
+  //   })
+  // .done(function() {
+  //   console.log(`${singleFileInfo.md5}: ajax done`);
+    //using setTimeout 0 to queue the events after
+    setTimeout(function(){
+      remotePath = `${CloudFile.remoteFolder(singleFileInfo.md5)}${singleFileInfo.filename}`;
+      CloudFile.upload(singleFileInfo.fullPath,remotePath,function(){
+        //touch the eivu server endpoint to create a cloudfile within the db
+        // $.ajax({
+        //     url: Config.baseUrl+"/ajax/favourites/set-favourite.ajax",
+        //     dataType: "json",
+        //     data: attrs,
+        //     type: "POST",
+        //     beforeSend: function(){
+        //       console.log(`${singleFileInfo.md5}: upload complete beforeSend`);
+        //       Painter.mark(singleFileInfo.md5, "Uploaded");
+        //     };
+        //   })
+        // .done(function() {
+        //   console.log(`${singleFileInfo.md5}: upload complete done`);
+        // })    
+        // .fail(function() {
+        //   Painter.mark(singleFileInfo.md5, "Complete");
+        // })    
+        // .always(function() {
+        //   alert("complete");
+        // })
+Painter.mark(singleFileInfo.md5, "Uploaded");
+        console.log(`uploaded ${singleFileInfo.filename}`
+      )});//ends CloudFile upload callback
+    }, 0); //end setTimeout
+  // })    
+  // .fail(function() {
+  //   Painter.mark(singleFileInfo.md5, "Failed");
+  // })    
+  // .always(function() {
+  //   alert("complete");
+  // })
+
+
+
+
+
+
+
+  //$.post send request for upload to the server
+
+  //.onComplete add the file to the queue
+    //update the 
+
+
+
+}, 3); //number of simulatenous things in queue, end queue
+
+
 
 
 testUpload = function() {
@@ -50,7 +145,7 @@ testUpload = function() {
       traverseQueue.push({fullPath: fullPath, fileStats: fileStats },function(error, data){
         //in current implementation callback is triggered too early, ie before md5file callback is done
         //ie we are failing a race condition
-        console.log("in callback")
+        console.log("in post traverse callback")
         if (error) return console.log(error);
         console.log(data.filename + " ==> " + data.md5)
       });
