@@ -137,6 +137,11 @@ class CloudFile {
       if (err) { throw err; }
     });
 
+fileStream.pipe(through(function(data) {
+  this.queue(data);
+  numBytes += data.length;
+  console.log(numBytes, 'bytes written');
+}));
 
     fileStream.on('open', function () {
       var s3 = new AWS.S3();

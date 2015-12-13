@@ -61,20 +61,20 @@ traverseQueue.drain = function() {
 
 
 var uploadQueue = async.queue(function(singleFileInfo, callback) {
-  // var jqxhr = $.ajax( "example.php" )
-  // $.ajax({
-  //     url: Config.baseUrl+"/ajax/favourites/set-favourite.ajax",
-  //     dataType: "json",
-  //     data: attrs,
-  //     type: "POST",
-  //     beforeSend: function(){
-  //       console.log(`${singleFileInfo.md5}: ajax beforeSend`);
-  //       Painter.mark(singleFileInfo.md5, "Uploading");
-  //     };
-  //   })
-  // .done(function() {
-  //   console.log(`${singleFileInfo.md5}: ajax done`);
-    //using setTimeout 0 to queue the events after
+  $.ajax({
+      // url: Config.baseUrl+"/ajax/favourites/set-favourite.ajax",
+      url: "http://localhost:3001/api/v1/cloud_files/" + singleFileInfo.md5 + "/authorize",
+      dataType: "json",
+      data: {"token": "yNKoyn41T912g81XefGPatSM"},
+      type: "POST",
+      beforeSend: function(){
+        console.log(`${singleFileInfo.md5}: ajax beforeSend`);
+        Painter.mark(singleFileInfo.md5, "Uploading");
+      }
+    })
+  .done(function() {
+    console.log(`${singleFileInfo.md5}: ajax done`);
+    // using setTimeout 0 to queue the events after
     setTimeout(function(){
       remotePath = `${CloudFile.remoteFolder(singleFileInfo.md5)}${singleFileInfo.filename}`;
       CloudFile.upload(singleFileInfo.fullPath,remotePath,function(){
@@ -103,13 +103,12 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
         callback(null, singleFileInfo);
       });//ends CloudFile upload callback
     }, 0); //end setTimeout
-  // })    
-  // .fail(function() {
-  //   Painter.mark(singleFileInfo.md5, "Failed");
-  // })    
-  // .always(function() {
-  //   alert("complete");
-  // })
+  })    
+  .fail(function(response) {
+    error = $.parseJSON(response.responseText).message;
+    callback(error, singleFileInfo);
+    Painter.mark(singleFileInfo.md5, "Failed");
+  })    
 
 
 
