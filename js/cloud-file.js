@@ -27,7 +27,7 @@ class CloudFile {
 
 
   static playable(fullPath) {
-    var format = mime.lookup(fullPath);
+    var format = CloudFile.detectMime(fullPath);
     return CloudFile.playableFormats().indexOf(format) != -1
   }
 
@@ -46,8 +46,9 @@ class CloudFile {
       //   break;
       case 'audio/mpeg3':
       case 'audio/x-mpeg-3':
-      case 'video/mpeg':
+      // case 'video/mpeg':
       case 'video/x-mpeg':
+      case 'audio/mpeg':
         format = 'audio/mp3';
         break;
       default:

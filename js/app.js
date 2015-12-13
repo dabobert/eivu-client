@@ -11,7 +11,6 @@ var ipc  = require('ipc'),
 var queue = async.queue(function(singleFileInfo, callback) {
   setTimeout(function(){ 
     var data={};
-
     md5File(singleFileInfo.fullPath, function (error, md5) {
       if (error) return console.log(error);
       var filename = CloudFile.toFilename(singleFileInfo.fullPath);
@@ -25,17 +24,27 @@ var queue = async.queue(function(singleFileInfo, callback) {
   }, 0); //end setTimeout  
 }, 20); //Only allow 20 copy requests at a time
 
-
+// assign a callback
+queue.drain = function() {
+  console.log(fileInfo.length)
+  alert("done!")
+  console.log(fileInfo.length)
+}
 
   testUpload = function() {
     // var badFilenames = ['.DS_Store', '.DS_Store'],
     var initialDir  = $("#uploadTarget").data("path"),
         requestData = { path: $("#uploadTarget").data("path") };
 
+    //traverse the directory chosen by the user
     Folder.traverse(initialDir, function(fullPath, fileStats) {
+      //proceed if the current file is playable in a browser
       if (CloudFile.playable(fullPath)) {
         console.log(fullPath)
+        //add file to processing queue
         queue.push({fullPath: fullPath, fileStats: fileStats },function(error, data){
+          //in current implementation callback is triggered too early, ie before md5file callback is done
+          //ie we are failing a race condition
           console.log("in callback")
           if (error) return console.log(error);
           // console.log(data.filename + " ==> " + data.md5)
