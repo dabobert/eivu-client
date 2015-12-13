@@ -4,8 +4,8 @@ var ipc  = require('ipc'),
     async= require("async"),
      $   = require('jQuery'),
     fileInfo = [],
-    md5File  = require('md5-file'),
-    md5Promises = [];
+    md5File  = require('md5-file');
+    // md5Promises = [];
 
 
 var queue = async.queue(function(singleFileInfo, callback) {

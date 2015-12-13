@@ -24,6 +24,34 @@ class CloudFile {
       // bucketId;
   }
 
+
+  static playable(fullPath) {
+    format = mime.lookup(fullPath);
+    CloudFile.playableFormats().indexOf(format) != -1
+  }
+
+  static playableFormats() {
+    return ['video/mp4', 'audio/mp3']
+  }
+
+  static detectMime(fullPath) {
+    format = mime.lookup(fullPath);
+    switch (format) {
+      case 'application/mp4':
+        format = 'video/mp4';
+        break;
+      case 'audio/mpeg3':
+      case 'audio/x-mpeg-3':
+      case 'video/mpeg':
+      case 'video/x-mpeg':
+        format = 'audio/mp3';
+        break;
+      default:
+        format; //use original value
+    }
+    return format;
+  }
+
   static online() { //#bool
     return true;
   }
