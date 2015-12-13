@@ -4,7 +4,7 @@ var ipc  = require('ipc'),
     async= require("async"),
     hash = require('md5-promised'),
      $   = require('jQuery'),
-    fileInfo = [];
+    allFilesInfo = [];
     
 
 
@@ -19,20 +19,20 @@ var traverseQueue = async.queue(function(singleFileInfo, callback) {
     //add the current file to the files table
     Painter.addRow(data);
     //add currnet file to global array of all files that are traversed.  this array will be used to upload data
-    fileInfo.push( data );
+    allFilesInfo.push( data );
     //tell the queue we have finished with this row, and perform "cleanup" tasks
     callback(null, data);
   }).fail(function(err) {
     console.log('Could not hash', err, err.stack);
   });
-}, 200); //Only allow 20 copy requests at a time
+}, 3); //Only allow 20 copy requests at a time
 
 
 // assign a callback
 traverseQueue.drain = function() {
   $('div#alertBox').html("done");
-  console.log(fileInfo.length)
-  async.each(fileInfo, function(singleFileInfo, callback) {
+  console.log(allFilesInfo.length)
+  async.each(allFilesInfo, function(singleFileInfo, callback) {
 
   //add file to upload queue
   uploadQueue.push(singleFileInfo,function(error, data){
@@ -126,7 +126,7 @@ Painter.mark(singleFileInfo.md5, "Uploaded");
 
 
 
-}, 3); //number of simulatenous things in queue, end queue
+}, 10); //number of simulatenous things in queue, end queue
 
 
 
