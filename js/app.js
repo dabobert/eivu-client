@@ -15,7 +15,7 @@ var ipc  = require('ipc'),
 // var queue = async.queue(createMd5, 10); // Run ten simultaneous uploads
 var queue = async.queue(function(singleFileInfo, callback) {
 // var queue = async.queue(function(fullPath, fileStats, callback) {
-  var data={}, promise = new Promise((resolve, reject) => md5File(singleFileInfo.fullPath, function (error, md5) {
+  var promise = new Promise((resolve, reject) => md5File(singleFileInfo.fullPath, function (error, md5) {
     if (error) return console.log(error);
 
     var filename = CloudFile.toFilename(singleFileInfo.fullPath);
@@ -26,11 +26,11 @@ var queue = async.queue(function(singleFileInfo, callback) {
     data = { fullPath: singleFileInfo.fullPath, md5: md5, filename: filename, size: singleFileInfo.fileStats.size }
     fileInfo.push( data );
     resolve( data );
+    callback(null, data);
   }));//end md5File
-  
+  // debugger
   //store value for promise
   md5Promises.push(promise);
-  callback(null, data);
 
 
 }, 20); //Only allow 20 copy requests at a time
