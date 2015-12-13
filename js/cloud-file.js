@@ -1,6 +1,7 @@
 'use strict';
 var AWS  = require('aws-sdk'),
     mime = require('mime'),
+    hash = require('md5-promised'),
      fs  = require('fs');
 
 class CloudFile {
@@ -25,6 +26,13 @@ class CloudFile {
       // bucketId;
   }
 
+  remoteFolder() {
+    this.md5.replace(/(\S{2})/g,"$1/");
+  }
+
+  remotePath() {
+    `${this.remoteFolder()}${this.filename}`
+  }
 
   static playable(fullPath) {
     var format = CloudFile.detectMime(fullPath);
@@ -89,6 +97,18 @@ class CloudFile {
         alert("bang")
       });
     });//end md5File
+
+
+  hash(fullPath).then(function(md5) {
+    var filename = CloudFile.toFilename(fullPath);
+    remote = `${md5.replace(/(\S{2})/g,"$1/")}${filename}`
+    CloudFile.upload('/Users/jinx/Dropbox/eBooks/Electron/electron-quick-start-master.zip', remote,function(){
+      console.log("all done!!!")
+      alert("bang")
+    });
+  }).fail(function(err) {
+    console.log('Could not hash', err, err.stack);
+  });
   }
 
   static upload(fullPath,remotePath,callback) {

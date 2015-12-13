@@ -25,7 +25,7 @@ var traverseQueue = async.queue(function(singleFileInfo, callback) {
   }).fail(function(err) {
     console.log('Could not hash', err, err.stack);
   });
-}, 20); //Only allow 20 copy requests at a time
+}, 200); //Only allow 20 copy requests at a time
 
 
 // assign a callback
