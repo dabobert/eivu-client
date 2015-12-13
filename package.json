@@ -16,6 +16,7 @@
   "dependencies": {
     "angular": "^1.4.8",
     "angular-route": "^1.4.8",
+    "async": "^1.5.0",
     "aws-sdk": "^2.2.18",
     "bootstrap": "^3.3.6",
     "crypto": "0.0.3",
