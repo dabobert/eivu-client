@@ -6,15 +6,26 @@ var AWS  = require('aws-sdk'),
 
 class CloudFile {
 
-  constructor() {
+  constructor(data) {
     this.accessKeyId     = process.env.EIVU_AWS_ACCESS_KEY_ID;
     this.secretAccessKey = process.env.EIVU_AWS_SECRET_ACCESS_KEY;
+
+    if (data.md5) {
+      this.md5 = data.md5;
+    }
+
+    if (data.fullPath) {
+      this.localFilename = data.fullPath;
+    }
+
+    if (data.bucketName) {
+      this.bucketName = data.bucketName;
+    }
       // var folder,
       // bucket,
       // user,
       // name ,
       // asset ,
-      // md5 ,
       // contentType ,
       // filesize  ,
       // description ,
@@ -26,12 +37,13 @@ class CloudFile {
       // bucketId;
   }
 
-  remoteFolder() {
-    this.md5.replace(/(\S{2})/g,"$1/");
+  url() {
+    return 'http://www.google.com'
   }
 
+
   remotePath() {
-    `${this.remoteFolder()}${this.filename}`
+   return `${CloudFile.remoteFolder(this.md5)}${this.filename}`
   }
 
   static playable(fullPath) {
@@ -73,8 +85,9 @@ class CloudFile {
     return fullPath.split('/').reverse()[0];
   }
 
-  url() {
-    return 'http://www.google.com'
+
+   static remoteFolder(md5) {
+    return md5.replace(/(\S{2})/g,"$1/");
   }
 
 
@@ -82,34 +95,22 @@ class CloudFile {
     return false;
   }
 
+
   static test(remote) {
     var fullPath = '/Users/jinx/Dropbox/eBooks/Electron/electron-quick-start-master.zip'
 
-    md5File(fullPath, function (error, md5) {
-      if (error) return console.log(error);
-
+    hash(fullPath).then(function(md5) {
       var filename = CloudFile.toFilename(fullPath);
-
       remote = `${md5.replace(/(\S{2})/g,"$1/")}${filename}`
-
       CloudFile.upload('/Users/jinx/Dropbox/eBooks/Electron/electron-quick-start-master.zip', remote,function(){
         console.log("all done!!!")
         alert("bang")
       });
-    });//end md5File
-
-
-  hash(fullPath).then(function(md5) {
-    var filename = CloudFile.toFilename(fullPath);
-    remote = `${md5.replace(/(\S{2})/g,"$1/")}${filename}`
-    CloudFile.upload('/Users/jinx/Dropbox/eBooks/Electron/electron-quick-start-master.zip', remote,function(){
-      console.log("all done!!!")
-      alert("bang")
+    }).fail(function(err) {
+      console.log('Could not hash', err, err.stack);
     });
-  }).fail(function(err) {
-    console.log('Could not hash', err, err.stack);
-  });
   }
+
 
   static upload(fullPath,remotePath,callback) {
 
@@ -135,6 +136,7 @@ class CloudFile {
     fileStream.on('error', function (err) {
       if (err) { throw err; }
     });
+
 
     fileStream.on('open', function () {
       var s3 = new AWS.S3();
