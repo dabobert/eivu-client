@@ -1,6 +1,7 @@
 'use strict';
-var AWS = require('aws-sdk'),
-     fs = require('fs');
+var AWS  = require('aws-sdk'),
+    mime = require('mime'),
+     fs  = require('fs');
 
 class CloudFile {
 
@@ -26,20 +27,23 @@ class CloudFile {
 
 
   static playable(fullPath) {
-    format = mime.lookup(fullPath);
-    CloudFile.playableFormats().indexOf(format) != -1
+    var format = mime.lookup(fullPath);
+    return CloudFile.playableFormats().indexOf(format) != -1
   }
 
   static playableFormats() {
-    return ['video/mp4', 'audio/mp3']
+    return ['video/mp4', 'audio/mp3', 'video/x-flv']
   }
 
   static detectMime(fullPath) {
-    format = mime.lookup(fullPath);
+    var format = mime.lookup(fullPath);
     switch (format) {
       case 'application/mp4':
         format = 'video/mp4';
         break;
+      // case 'video/x-flv':
+      //   format = 'video/x-flv';
+      //   break;
       case 'audio/mpeg3':
       case 'audio/x-mpeg-3':
       case 'video/mpeg':

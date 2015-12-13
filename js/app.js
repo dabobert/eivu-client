@@ -33,12 +33,16 @@ var queue = async.queue(function(singleFileInfo, callback) {
         requestData = { path: $("#uploadTarget").data("path") };
 
     Folder.traverse(initialDir, function(fullPath, fileStats) {
-      console.log(fullPath)
-      queue.push({fullPath: fullPath, fileStats: fileStats },function(error, data){
-        console.log("in callback")
-        if (error) return console.log(error);
-        // console.log(data.filename + " ==> " + data.md5)
-      });
+      if (CloudFile.playable(fullPath)) {
+        console.log(fullPath)
+        queue.push({fullPath: fullPath, fileStats: fileStats },function(error, data){
+          console.log("in callback")
+          if (error) return console.log(error);
+          // console.log(data.filename + " ==> " + data.md5)
+        });
+      } else {
+        console.log('Not cloud playable. skipping: ' + fullPath);
+      }
     });//end traverse
 
     ipc.send('requestForTestFn', requestData);
