@@ -74,7 +74,7 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
     })
   .done(function() {
     console.log(`${singleFileInfo.md5}: ajax done`);
-    try{
+    // try{
     // using setTimeout 0 to queue the events after
     // setTimeout(function(){
       remotePath = `${CloudFile.remoteFolder(singleFileInfo.md5)}${singleFileInfo.filename}`;
@@ -104,10 +104,10 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
         callback(null, singleFileInfo);
       });//ends CloudFile upload callback
     // }, 0); //end setTimeout
-    } catch (error) {
-      callback(error, singleFileInfo);
-      Painter.mark(singleFileInfo.md5, "Failed");
-    }
+    // } catch (error) {
+    //   callback(error, singleFileInfo);
+    //   Painter.mark(singleFileInfo.md5, "Failed");
+    // }
   })    
   .fail(function(response) {
     error = $.parseJSON(response.responseText).message;
