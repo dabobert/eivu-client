@@ -34,15 +34,15 @@ traverseQueue.drain = function() {
   console.log(allFilesInfo.length)
   async.each(allFilesInfo, function(singleFileInfo, callback) {
 
-  //add file to upload queue
-  uploadQueue.push(singleFileInfo,function(error, data){
-    //in current implementation callback is triggered too early, ie before md5file callback is done
-    //ie we are failing a race condition
-    console.log("in post upload callback")
-    if (error) return console.log(error);
-    console.log(`not sure what to do here: ${singleFileInfo.filename}`)
-    // console.log(data.filename + " ==> " + data.md5)
-  });
+    //add file to upload queue
+    uploadQueue.push(singleFileInfo,function(error, data){
+      //in current implementation callback is triggered too early, ie before md5file callback is done
+      //ie we are failing a race condition
+      console.log("in post upload callback")
+      if (error) return console.log(error);
+      console.log(`not sure what to do here: ${singleFileInfo.filename}`)
+      // console.log(data.filename + " ==> " + data.md5)
+    });
 
 
 
@@ -102,8 +102,9 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
         //   alert("complete");
         // })
 Painter.mark(singleFileInfo.md5, "Uploaded");
-        console.log(`uploaded ${singleFileInfo.filename}`
-      )});//ends CloudFile upload callback
+        console.log(`uploaded ${singleFileInfo.filename}`);
+        callback(null, singleFileInfo);
+      });//ends CloudFile upload callback
     }, 0); //end setTimeout
   // })    
   // .fail(function() {
