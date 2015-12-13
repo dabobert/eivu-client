@@ -4,28 +4,27 @@ var ipc  = require('ipc'),
     async= require("async"),
     hash = require('md5-promised'),
      $   = require('jQuery'),
-    fileInfo = [],
-    md5File  = require('md5-file');
+    fileInfo = [];
+    
 
 
 var queue = async.queue(function(singleFileInfo, callback) {
-  setTimeout(function(){ 
-    var data={};
-
-
-
-hash(singleFileInfo.fullPath).then(function(md5) {
-  var filename = CloudFile.toFilename(singleFileInfo.fullPath);
-
-
-      $('<tr id="' + md5 + '"><td class="filename">' + filename.substring(0,50) + '</td><td class="size">' + singleFileInfo.fileStats.size + '</td><td class="md5">' + md5 + '</td><td class="status">Queued</td></tr>').appendTo('table#fileData tbody');
-      data = { fullPath: singleFileInfo.fullPath, md5: md5, filename: filename, size: singleFileInfo.fileStats.size }
-      fileInfo.push( data );
-callback(null, data);
-
-}).fail(function(err) {
-  console.log('Could not hash', err, err.stack);
-});
+  /* 
+    Using a promise md5 function to grab the md5.  This prevents the app from seizing (preventing user input) without using setTimeout 0 and means we don't 
+    means we don't have to dive into callback hell
+  */
+  hash(singleFileInfo.fullPath).then(function(md5) {
+    var data, filename = CloudFile.toFilename(singleFileInfo.fullPath);
+    data = { fullPath: singleFileInfo.fullPath, md5: md5, filename: filename, size: singleFileInfo.fileStats.size }
+    //add the current file to the files table
+    addRowToStatusTable(data);
+    //add currnet file to global array of all files that are traversed.  this array will be used to upload data
+    fileInfo.push( data );
+    //tell the queue we have finished with this row, and perform "cleanup" tasks
+    callback(null, data);
+  }).fail(function(err) {
+    console.log('Could not hash', err, err.stack);
+  });
 
 
 
@@ -44,8 +43,12 @@ callback(null, data);
     //   fileInfo.push( data );
     // });//end md5File
     // callback(null, data);
-  }, 0); //end setTimeout  
+  // }, 0); //end setTimeout  
 }, 20); //Only allow 20 copy requests at a time
+
+function addRowToStatusTable(data) {
+  $('<tr id="' + data.md5 + '"><td class="filename">' + data.filename.substring(0,50) + '</td><td class="size">' + data.size + '</td><td class="md5">' + data.md5 + '</td><td class="status">Queued</td></tr>').appendTo('table#fileData tbody');
+}
 
 // assign a callback
 queue.drain = function() {
