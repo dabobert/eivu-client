@@ -112,15 +112,15 @@ class CloudFile {
   }
 
 
-  static upload(fullPath,remotePath,settings, callback) {
+  static upload(fullPath, remotePath, settings, callback) {
 
     if (!fullPath) throw 'fullPath is undefined';
     if (!remotePath) throw 'remotePath is undefined';
+    if (!settings) throw 'settings is undefined';
 
     //check to makre sure the md5 doens't exist, if it does exist exist
     var accessKeyId     = process.env.EIVU_AWS_ACCESS_KEY_ID;
     var secretAccessKey = process.env.EIVU_AWS_SECRET_ACCESS_KEY;
-    var bucketName      = 'eivutest';
     var fileStream      = fs.createReadStream(fullPath);
 /*
     if (!remotePath) {
@@ -140,7 +140,7 @@ class CloudFile {
     fileStream.on('open', function () {
       var s3 = new AWS.S3();
       s3.putObject({
-        Bucket: bucketName,
+        Bucket: settings.bucket_name,
         Key: remotePath,
         Body: fileStream
       }, function (err) {
