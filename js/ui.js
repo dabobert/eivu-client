@@ -16,7 +16,7 @@ class UI {
     return {
       bucket_id: $("#bucket").val(),
       bucket_name: $("#bucket option:selected").html(),
-      baseUrl: ($("input[name=env]:checked").val() == "development" ? "http://localhost:3001" : '//eivuapp.heroku.com'),
+      baseUrl: ($("input[name=env]:checked").val() == "development" ? "http://localhost:3001" : 'http://eivuapp.heroku.com'),
       token: "yNKoyn41T912g81XefGPatSM"
     }
   };

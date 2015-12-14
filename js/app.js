@@ -61,11 +61,11 @@ traverseQueue.drain = function() {
 
 
 var uploadQueue = async.queue(function(singleFileInfo, callback) {
+  settings = UI.fetchSettings();
   $.ajax({
-      // url: Config.baseUrl+"/ajax/favourites/set-favourite.ajax",
-      url: "http://localhost:3001/api/v1/cloud_files/" + singleFileInfo.md5 + "/authorize",
+      url: settings.baseUrl + "/api/v1/cloud_files/" + singleFileInfo.md5 + "/authorize",
       dataType: "json",
-      data: {"token": "yNKoyn41T912g81XefGPatSM"},
+      data: {"token": settings.token},
       type: "POST",
       beforeSend: function(){
         console.log(`${singleFileInfo.md5}: ajax beforeSend`);
