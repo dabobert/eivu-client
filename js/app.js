@@ -15,7 +15,14 @@ var traverseQueue = async.queue(function(singleFileInfo, callback) {
   */
   hash(singleFileInfo.fullPath).then(function(md5) {
     var data, filename = CloudFile.toFilename(singleFileInfo.fullPath);
-    data = { fullPath: singleFileInfo.fullPath, md5: md5, filename: filename, size: singleFileInfo.fileStats.size }
+    data = {
+      fullPath: singleFileInfo.fullPath,
+      md5: md5,
+      filename: filename,
+      size: singleFileInfo.fileStats.size,
+      mime: CloudFile.detectMime(singleFileInfo.fullPath)
+    }
+
     //add the current file to the files table
     UI.addRow(data);
     //add currnet file to global array of all files that are traversed.  this array will be used to upload data
@@ -80,28 +87,39 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
       remotePath = `${CloudFile.remoteFolder(singleFileInfo.md5)}${singleFileInfo.filename}`;
       CloudFile.upload(singleFileInfo.fullPath, remotePath, UI.fetchSettings(), function(){
         //touch the eivu server endpoint to create a cloudfile within the db
+        debugger
         $.ajax({
-            url: settings.baseUrl + "/api/v1/cloud_files/" + singleFileInfo.md5 + "/authorize",
+            url: settings.baseUrl + "/api/v1/cloud_files",
             dataType: "json",
-            data: attrs,
+            data: {
+              "token": settings.token,
+              "cloud_file": {
+                "asset": singleFileInfo.filename,
+                "md5": singleFileInfo.md5,
+                "content_type": singleFileInfo.mime,
+                "filesize": singleFileInfo.size,
+                "folder_id": 1,
+                "bucket_id": settings.bucket_id
+              }
+            },
             type: "POST",
             beforeSend: function(){
               console.log(`${singleFileInfo.md5}: upload complete beforeSend`);
               UI.mark(singleFileInfo.md5, "Uploaded");
-            };
+            }
           })
         .done(function() {
           console.log(`${singleFileInfo.md5}: upload complete done`);
+          callback(null, singleFileInfo);
         })    
-        .fail(function() {
-          UI.mark(singleFileInfo.md5, "Complete");
+        .fail(function(response) {
+          error = $.parseJSON(response.responseText).message;
+          callback(error, singleFileInfo);
+          UI.mark(singleFileInfo.md5, "Failed");
         })    
         .always(function() {
-          alert("complete");
+          // alert("complete");
         })
-        UI.mark(singleFileInfo.md5, "Uploaded");
-        console.log(`uploaded ${singleFileInfo.filename}`);
-        callback(null, singleFileInfo);
       });//ends CloudFile upload callback
     // }, 0); //end setTimeout
     // } catch (error) {
