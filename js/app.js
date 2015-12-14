@@ -17,7 +17,7 @@ var traverseQueue = async.queue(function(singleFileInfo, callback) {
     var data, filename = CloudFile.toFilename(singleFileInfo.fullPath);
     data = { fullPath: singleFileInfo.fullPath, md5: md5, filename: filename, size: singleFileInfo.fileStats.size }
     //add the current file to the files table
-    Painter.addRow(data);
+    UI.addRow(data);
     //add currnet file to global array of all files that are traversed.  this array will be used to upload data
     allFilesInfo.push( data );
     //tell the queue we have finished with this row, and perform "cleanup" tasks
@@ -69,7 +69,7 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
       type: "POST",
       beforeSend: function(){
         console.log(`${singleFileInfo.md5}: ajax beforeSend`);
-        Painter.mark(singleFileInfo.md5, "Uploading");
+        UI.mark(singleFileInfo.md5, "Uploading");
       }
     })
   .done(function() {
@@ -78,7 +78,7 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
     // using setTimeout 0 to queue the events after
     // setTimeout(function(){
       remotePath = `${CloudFile.remoteFolder(singleFileInfo.md5)}${singleFileInfo.filename}`;
-      CloudFile.upload(singleFileInfo.fullPath,remotePath,function(){
+      CloudFile.upload(singleFileInfo.fullPath, remotePath, UI.fetchSettings(), function(){
         //touch the eivu server endpoint to create a cloudfile within the db
         // $.ajax({
         //     url: Config.baseUrl+"/ajax/favourites/set-favourite.ajax",
@@ -87,32 +87,32 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
         //     type: "POST",
         //     beforeSend: function(){
         //       console.log(`${singleFileInfo.md5}: upload complete beforeSend`);
-        //       Painter.mark(singleFileInfo.md5, "Uploaded");
+        //       UI.mark(singleFileInfo.md5, "Uploaded");
         //     };
         //   })
         // .done(function() {
         //   console.log(`${singleFileInfo.md5}: upload complete done`);
         // })    
         // .fail(function() {
-        //   Painter.mark(singleFileInfo.md5, "Complete");
+        //   UI.mark(singleFileInfo.md5, "Complete");
         // })    
         // .always(function() {
         //   alert("complete");
         // })
-        Painter.mark(singleFileInfo.md5, "Uploaded");
+        UI.mark(singleFileInfo.md5, "Uploaded");
         console.log(`uploaded ${singleFileInfo.filename}`);
         callback(null, singleFileInfo);
       });//ends CloudFile upload callback
     // }, 0); //end setTimeout
     // } catch (error) {
     //   callback(error, singleFileInfo);
-    //   Painter.mark(singleFileInfo.md5, "Failed");
+    //   UI.mark(singleFileInfo.md5, "Failed");
     // }
   })    
   .fail(function(response) {
     error = $.parseJSON(response.responseText).message;
     callback(error, singleFileInfo);
-    Painter.mark(singleFileInfo.md5, "Failed");
+    UI.mark(singleFileInfo.md5, "Failed");
   })    
 
 
@@ -171,4 +171,4 @@ assignDataPath = function(e) {
 
 ipc.on('responseFromTestFn', function(responseArgument){
   $("#outputWindow").html(responseArgument.output.data);
-});
+})

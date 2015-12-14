@@ -112,7 +112,7 @@ class CloudFile {
   }
 
 
-  static upload(fullPath,remotePath,callback) {
+  static upload(fullPath,remotePath,settings, callback) {
 
     if (!fullPath) throw 'fullPath is undefined';
     if (!remotePath) throw 'remotePath is undefined';
