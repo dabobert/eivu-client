@@ -80,25 +80,25 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
       remotePath = `${CloudFile.remoteFolder(singleFileInfo.md5)}${singleFileInfo.filename}`;
       CloudFile.upload(singleFileInfo.fullPath, remotePath, UI.fetchSettings(), function(){
         //touch the eivu server endpoint to create a cloudfile within the db
-        // $.ajax({
-        //     url: Config.baseUrl+"/ajax/favourites/set-favourite.ajax",
-        //     dataType: "json",
-        //     data: attrs,
-        //     type: "POST",
-        //     beforeSend: function(){
-        //       console.log(`${singleFileInfo.md5}: upload complete beforeSend`);
-        //       UI.mark(singleFileInfo.md5, "Uploaded");
-        //     };
-        //   })
-        // .done(function() {
-        //   console.log(`${singleFileInfo.md5}: upload complete done`);
-        // })    
-        // .fail(function() {
-        //   UI.mark(singleFileInfo.md5, "Complete");
-        // })    
-        // .always(function() {
-        //   alert("complete");
-        // })
+        $.ajax({
+            url: settings.baseUrl + "/api/v1/cloud_files/" + singleFileInfo.md5 + "/authorize",
+            dataType: "json",
+            data: attrs,
+            type: "POST",
+            beforeSend: function(){
+              console.log(`${singleFileInfo.md5}: upload complete beforeSend`);
+              UI.mark(singleFileInfo.md5, "Uploaded");
+            };
+          })
+        .done(function() {
+          console.log(`${singleFileInfo.md5}: upload complete done`);
+        })    
+        .fail(function() {
+          UI.mark(singleFileInfo.md5, "Complete");
+        })    
+        .always(function() {
+          alert("complete");
+        })
         UI.mark(singleFileInfo.md5, "Uploaded");
         console.log(`uploaded ${singleFileInfo.filename}`);
         callback(null, singleFileInfo);
