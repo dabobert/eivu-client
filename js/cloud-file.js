@@ -53,7 +53,7 @@ class CloudFile {
   }
 
   static playableFormats() {
-    return ['video/mp4', 'audio/mp3', 'video/x-flv']
+    return ['video/mp4', 'audio/mp3', 'video/x-flv', 'application/eivu']
   }
 
   static detectMime(fullPath) {

@@ -2,6 +2,7 @@
 var ipc  = require('ipc'),
     fs   = require('fs'),
     async= require("async"),
+    path = require('path'),
     hash = require('md5-promised'),
      $   = require('jQuery'),
     allFilesInfo = [];
@@ -20,7 +21,8 @@ var traverseQueue = async.queue(function(singleFileInfo, callback) {
       md5: md5,
       filename: filename,
       size: singleFileInfo.fileStats.size,
-      mime: CloudFile.detectMime(singleFileInfo.fullPath)
+      mime: CloudFile.detectMime(singleFileInfo.fullPath),
+      folder_id: (UI.fetchSettings().preserve_tree ? -1 : null)
     }
 
     //add the current file to the files table
@@ -87,7 +89,6 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
       remotePath = `${CloudFile.remoteFolder(singleFileInfo.md5)}${singleFileInfo.filename}`;
       CloudFile.upload(singleFileInfo.fullPath, remotePath, UI.fetchSettings(), function(){
         //touch the eivu server endpoint to create a cloudfile within the db
-        debugger
         $.ajax({
             url: settings.baseUrl + "/api/v1/cloud_files",
             dataType: "json",
@@ -98,7 +99,7 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
                 "md5": singleFileInfo.md5,
                 "content_type": singleFileInfo.mime,
                 "filesize": singleFileInfo.size,
-                "folder_id": 1,
+                "folder_id": singleFileInfo.folder_id,
                 "bucket_id": settings.bucket_id
               }
             },
@@ -110,6 +111,7 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
           })
         .done(function() {
           console.log(`${singleFileInfo.md5}: upload complete done`);
+          UI.mark(singleFileInfo.md5, "Complete");
           callback(null, singleFileInfo);
         })    
         .fail(function(response) {
