@@ -2,6 +2,7 @@
 var AWS  = require('aws-sdk'),
     mime = require('mime'),
     hash = require('md5-promised'),
+    path = require('path'),
      fs  = require('fs');
 
 class CloudFile {
@@ -56,6 +57,9 @@ class CloudFile {
   }
 
   static detectMime(fullPath) {
+    if (path.extname(fullPath) == ".eivu")
+      return "application/eivu";
+
     var format = mime.lookup(fullPath);
     switch (format) {
       case 'application/mp4':
