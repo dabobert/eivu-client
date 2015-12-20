@@ -132,7 +132,7 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
   .fail(function(response) {
     error = $.parseJSON(response.responseText).message;
     callback(error, singleFileInfo);
-    UI.mark(singleFileInfo.md5, "Failed");
+    UI.mark(singleFileInfo.md5, "Denied");
   })    
 
 
