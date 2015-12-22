@@ -19,6 +19,7 @@ class UI {
       baseUrl: ($("input[name=env]:checked").val() == "development" ? "http://localhost:3001" : 'http://eivuapp.heroku.com'),
       token: "yNKoyn41T912g81XefGPatSM",
       preserve_tree: $("#preserve_tree").prop("checked"),
+      preserve_tree: $("#nsfw").prop("checked"),
       initialDir: $("#uploadTarget").data("path")
     }
   };

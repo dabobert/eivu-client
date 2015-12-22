@@ -101,6 +101,7 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
                 "filesize": singleFileInfo.size,
                 "folder_id": singleFileInfo.folder_id,
                 "bucket_id": settings.bucket_id,
+                "nsfw": settings.nsfw,
                 "relative_path": singleFileInfo.fullPath.replace(settings.initialDir,"")
               }
             },
