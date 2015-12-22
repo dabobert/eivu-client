@@ -100,7 +100,8 @@ var uploadQueue = async.queue(function(singleFileInfo, callback) {
                 "content_type": singleFileInfo.mime,
                 "filesize": singleFileInfo.size,
                 "folder_id": singleFileInfo.folder_id,
-                "bucket_id": settings.bucket_id
+                "bucket_id": settings.bucket_id,
+                "relative_path": singleFileInfo.fullPath.replace(settings.initialDir,"")
               }
             },
             type: "POST",
