@@ -1,5 +1,6 @@
 'use strict';
 var AWS  = require('aws-sdk'),
+    mp4  = require('mp4-parser'),
     mime = require('mime'),
     hash = require('md5-promised'),
     path = require('path'),
@@ -44,17 +45,36 @@ class CloudFile {
 
 
   remotePath() {
-   return `${CloudFile.remoteFolder(this.md5)}${this.filename}`
+    return `${CloudFile.remoteFolder(this.md5)}${this.filename}`
   }
+
+
+  static readMp4Tags(path, callback) {
+    var stream = require('fs').createReadStream(path),
+    parser = stream.pipe(new mp4());
+    stream.info = {};
+
+    parser.on('data', function(tag){
+      stream.info[tag.type] = tag.value
+      console.log(`${tag.type} => ${tag.value}`)  // => 'aART'
+    })
+
+    parser.on('finish', function () {
+      callback(stream.info)
+    });
+  }
+
 
   static playable(fullPath) {
     var format = CloudFile.detectMime(fullPath);
     return CloudFile.playableFormats().indexOf(format) != -1
   }
 
+
   static playableFormats() {
     return ['video/mp4', 'audio/mp3', 'video/x-flv', 'application/eivu']
   }
+
 
   static detectMime(fullPath) {
     if (path.extname(fullPath) == ".eivu")
@@ -81,16 +101,18 @@ class CloudFile {
     return format;
   }
 
+
   static online() { //#bool
     return true;
   }
+
 
   static toFilename(fullPath) {
     return fullPath.split('/').reverse()[0];
   }
 
 
-   static remoteFolder(md5) {
+  static remoteFolder(md5) {
     return md5.replace(/(\S{2})/g,"$1/");
   }
 
