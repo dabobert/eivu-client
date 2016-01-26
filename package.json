@@ -20,6 +20,7 @@
     "aws-sdk": "^2.2.18",
     "bootstrap": "^3.3.6",
     "crypto": "0.0.3",
+    "faker": "^3.0.1",
     "filewalker": "^0.1.2",
     "jquery": "^2.1.4",
     "md5-file": "^2.0.3",

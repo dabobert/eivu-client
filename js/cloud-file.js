@@ -44,8 +44,30 @@ class CloudFile {
   }
 
 
+
+
   remotePath() {
     return `${CloudFile.remoteFolder(this.md5)}${this.filename}`
+  }
+
+
+  static readMediaInfo(fileInfo, callback) {
+    if (fileInfo.mime == "application/eivu")
+      CloudFile.createDummyEivuData(fileInfo.fullPath, callback);
+    else if (fileInfo.mime == "video/mp4")
+      CloudFile.readMp4Tags(fileInfo.fullPath, callback);
+    else
+      callback({})
+  }
+
+
+  static createDummyEivuData(fileInfo, callback) {
+    info = {}
+    info.duration  = Math.ceil(Math.random() * 2700)
+    info.metadata  = []
+    info.metadata.performer = faker.name.findName();
+    info.metadata.album     = faker.commerce.productName();
+    callback(info);
   }
 
 
@@ -60,6 +82,7 @@ class CloudFile {
     })
 
     parser.on('finish', function () {
+      // debugger;
       callback(stream.info)
     });
   }
@@ -114,11 +137,6 @@ class CloudFile {
 
   static remoteFolder(md5) {
     return md5.replace(/(\S{2})/g,"$1/");
-  }
-
-
-  delete_remote() {
-    return false;
   }
 
 

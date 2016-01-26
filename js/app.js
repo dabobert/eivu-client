@@ -4,6 +4,7 @@ var ipc  = require('ipc'),
     async= require("async"),
     path = require('path'),
     hash = require('md5-promised'),
+    faker= require('faker'),
      $   = require('jQuery'),
     allFilesInfo = [];
     
@@ -42,20 +43,20 @@ traverseQueue.drain = function() {
   $('div#alertBox').html("all files queued");
   console.log(allFilesInfo.length)
   async.each(allFilesInfo, function(singleFileInfo, callback) {
+    CloudFile.readMediaInfo(singleFileInfo,function(mediaInfo) {
+      // debugger
+      //add file to upload queue
+      uploadQueue.push(singleFileInfo,function(error, data){
+        //in current implementation callback is triggered too early, ie before md5file callback is done
+        //ie we are failing a race condition
+        console.log("in post upload callback")
+        if (error) return console.log(error);
+        console.log(`not sure what to do here: ${singleFileInfo.filename}`)
+        // console.log(data.filename + " ==> " + data.md5)
+      });
+      callback();
+    })
 
-    //add file to upload queue
-    uploadQueue.push(singleFileInfo,function(error, data){
-      //in current implementation callback is triggered too early, ie before md5file callback is done
-      //ie we are failing a race condition
-      console.log("in post upload callback")
-      if (error) return console.log(error);
-      console.log(`not sure what to do here: ${singleFileInfo.filename}`)
-      // console.log(data.filename + " ==> " + data.md5)
-    });
-
-
-
-    callback();
   }, function(err){
       // if any of the file processing produced an error, err would equal that error
       if( err ) {
