@@ -87,10 +87,9 @@ class CloudFile {
         tags: []
       }
 
-      var translation_hash = {artist: "�ART", title: "�nam"};
+      var translation_hash = {artist: "\uFFFDART", title: "\uFFFDnam"};
     
       $.each(translation_hash, function( new_key, orig_key ) {
-        debugger
         if (stream.info[orig_key]) {
           metadata[new_key] = stream.info[orig_key];
           metadata.tags.push(stream.info[orig_key].toLowerCase());
