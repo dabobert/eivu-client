@@ -82,7 +82,34 @@ class CloudFile {
     })
 
     parser.on('finish', function () {
-      // debugger;
+      var metadata = {
+        duration: stream.info.duration,
+        tags: []
+      }
+
+      var translation_hash = {artist: "�ART", title: "�nam"};
+    
+      $.each(translation_hash, function( new_key, orig_key ) {
+        debugger
+        if (stream.info[orig_key]) {
+          metadata[new_key] = stream.info[orig_key];
+          metadata.tags.push(stream.info[orig_key].toLowerCase());
+        }
+      });
+
+      //insert tags if they exist
+      //a seperate step because it needs parsing
+      if (stream.info.desc) {
+        //removes spaces around commas, and splits result into an array
+        metadata.tags = metadata.tags.concat(stream.info.desc.toLowerCase().match( /(?=\S)[^,]+?(?=\s*(,|$))/g ))
+      }
+
+      //only keep unique values
+      metadata.tags = metadata.tags.filter(function(itm,i,a){
+        return i==a.indexOf(itm);
+      });
+
+      debugger;
       callback(stream.info)
     });
   }
