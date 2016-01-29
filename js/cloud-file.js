@@ -83,32 +83,36 @@ class CloudFile {
 
     parser.on('finish', function () {
       var metadata = {
+        artist: [],
         duration: stream.info.duration,
         tags: []
       }
 
-      var translation_hash = {artist: "\uFFFDART", title: "\uFFFDnam"};
-    
+      var translation_hash = { title: "\uFFFDnam", show: "tvsh", network: "tvnn", episode_id: "tven" };
+      var translation_hash_multi = { artist: "\uFFFDART", tags: "desc" };
+
+
       $.each(translation_hash, function( new_key, orig_key ) {
         if (stream.info[orig_key]) {
           metadata[new_key] = stream.info[orig_key];
-          metadata.tags.push(stream.info[orig_key].toLowerCase());
         }
       });
 
-      //insert tags if they exist
-      //a seperate step because it needs parsing
-      if (stream.info.desc) {
-        //removes spaces around commas, and splits result into an array
-        metadata.tags = metadata.tags.concat(stream.info.desc.toLowerCase().match( /(?=\S)[^,]+?(?=\s*(,|$))/g ))
-      }
+      //add multi values if they exist
+      $.each(translation_hash_multi, function( new_key, orig_key ) {
+        if (stream.info[orig_key]) {
+          //removes spaces around commas, and splits result into an array
+          metadata[new_key] = metadata[new_key].concat(stream.info[orig_key].toLowerCase().match( /(?=\S)[^,]+?(?=\s*(,|$))/g ))
+        }
+      });
 
+      //add all artists to tags
+      metadata.tags = metadata.tags.concat(metadata.artist)
       //only keep unique values
       metadata.tags = metadata.tags.filter(function(itm,i,a){
         return i==a.indexOf(itm);
       });
 
-      debugger;
       callback(stream.info)
     });
   }
