@@ -113,7 +113,7 @@ class CloudFile {
         return i==a.indexOf(itm);
       });
 
-      callback(stream.info)
+      callback(metadata)
     });
   }
 
